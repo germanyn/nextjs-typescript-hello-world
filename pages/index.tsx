@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import ArticleList from '../components/ArticleList'
 import { SERVER_URL } from '../config'
+import ArticleService from '../services/ArticleService'
 import { Article } from '../types/Articles'
 
 interface Props {
@@ -21,8 +22,7 @@ const Home: NextPage<Props> = ({ articles }) => {
 export default Home
 
 export const getStaticProps = async () => {
-  const res = await fetch(`${SERVER_URL}/api/articles`)
-  const articles = await res.json()
+  const articles = ArticleService.list()
 
   return {
     props: {

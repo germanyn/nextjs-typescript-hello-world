@@ -5,6 +5,7 @@ import { Article } from '../../types/Articles'
 import { ParsedUrlQuery } from 'querystring'
 import { SERVER_URL } from '../../config'
 import Meta from '../../components/Meta'
+import ArticleService from '../../services/ArticleService'
 
 const article: React.FC<Props> = ({ article }: Props) => {
     return (
@@ -29,8 +30,8 @@ interface Props {
 }
 
 export const getStaticProps: GetStaticProps<Props, ServerContext> = async (context) => {
-    const res = await fetch(`${SERVER_URL}/api/articles/${context.params?.id}`)
-    const article = await res.json()
+    if (!context.params?.id) throw new Error('ID not found')
+    const article = ArticleService.get(context.params?.id)!
     return {
         props: {
             article,
@@ -39,8 +40,7 @@ export const getStaticProps: GetStaticProps<Props, ServerContext> = async (conte
 }
 
 export const getStaticPaths = async() => {
-    const res = await fetch(`${SERVER_URL}/api/articles`)
-    const articles: Article[] = await res.json()
+    const articles: Article[] = ArticleService.list()
     return {
         paths: articles
             .map(({ id }) => id.toString())
